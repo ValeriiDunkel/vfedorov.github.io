@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Грузчик из Шереметьево</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#1B3A6B" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Грузчик SVO" />
+<link rel="apple-touch-icon" href="icons/logo.jpg" />
+<link rel="stylesheet" href="style.css" />
+<script>
+// Apply theme before render to prevent flash
+(function () {
+var saved = localStorage.getItem('theme');
+var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (saved === 'dark' || (!saved && prefersDark)) {
+document.documentElement.setAttribute('data-theme', 'dark');
+}
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+<div class="header-inner">
+<div class="channel-avatar">
+<img src="icons/logo.jpg" alt="Грузчик из Шереметьево" />
+</div>
+<div class="channel-info">
+<h1 class="channel-name">Грузчик из Шереметьево</h1>
+<a class="channel-handle" href="https://t.me/loaderfromSVO" target="_blank" rel="noopener">@loaderfromSVO</a>
+</div>
+<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему" title="Переключить тему">
+<span class="theme-toggle-thumb">
+<!-- Sun icon -->
+<svg class="icon-sun" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 4.5a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 4.5zm0 13.5a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 18zm7.5-7.5a.75.75 0 010 1.5h-1.5a.75.75 0 010-1.5h1.5zM6 12a.75.75 0 01-.75.75H3.75a.75.75 0 010-1.5H5.25A.75.75 0 016 12zm9.53-4.47a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zM8.47 16.47a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm9.12 1.06a.75.75 0 11-1.06 1.06l-1.06-1.06a.75.75 0 111.06-1.06l1.06 1.06zM7.47 8.53a.75.75 0 11-1.06-1.06L7.47 6.41a.75.75 0 111.06 1.06L7.47 8.53zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z"/>
+</svg>
+<!-- Moon icon -->
+<svg class="icon-moon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.75 12A9.75 9.75 0 0112 21.75 9.75 9.75 0 012.25 12 9.75 9.75 0 0112 2.25c.28 0 .558.012.832.034a.75.75 0 01.354 1.322A7.5 7.5 0 1019.5 12a7.46 7.46 0 00-.524-2.773.75.75 0 01.956-1.003c1.155.468 1.818 1.43 1.818 3.776z"/>
+</svg>
+</span>
+</button>
+<div class="updated-badge" id="updatedBadge" title="Время последнего обновления">
+<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+<span id="updatedText">—</span>
+</div>
+</div>
+</header>
+
+<main class="feed-container">
+<div id="postFeed" class="post-feed" role="feed" aria-label="Лента постов"></div>
+
+<div id="loadingSpinner" class="loading-spinner" aria-live="polite">
+<div class="spinner"></div>
+<span>Загрузка постов...</span>
+</div>
+
+<div id="loadMoreWrap" class="load-more-wrap hidden">
+<button id="loadMoreBtn" class="load-more-btn">Загрузить ещё</button>
+</div>
+
+<div id="emptyState" class="empty-state hidden">
+<div class="empty-icon">📭</div>
+<h2>Нет постов</h2>
+<p>Посты появятся здесь после первого запуска GitHub Action.</p>
+</div>
+
+<div id="errorState" class="error-state hidden">
+<div class="error-icon">⚠️</div>
+<h2>Ошибка загрузки</h2>
+<p id="errorMessage">Не удалось загрузить данные.</p>
+</div>
+</main>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true">
+<button class="lightbox-close" id="lightboxClose" aria-label="Закрыть">&times;</button>
+<div class="lightbox-content" id="lightboxContent"></div>
+<button class="lightbox-prev hidden" id="lightboxPrev" aria-label="Предыдущее">&#10094;</button>
+<button class="lightbox-next hidden" id="lightboxNext" aria-label="Следующее">&#10095;</button>
+</div>
+
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js');
+});
+}
+</script>
+</body>
+</html>
