@@ -3,755 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram — adv_vfedorov</title>
+    <title>adv_vfedorov — Telegram</title>
     <style>
         :root {
-            --bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text: #222222;
-            --text-secondary: #888888;
+            --bg: #f4f4f5;
+            --card: #fff;
             --accent: #2AABEE;
-            --accent-hover: #1d96d1;
-            --border: #e8e8e8;
-            --shadow: rgba(0, 0, 0, 0.06);
-            --mark-bg: #fff3cd;
+            --accent2: #1a8fd1;
+            --text: #1a1a1a;
+            --muted: #8e8e93;
+            --border: #e5e5ea;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.65;
-            -webkit-font-smoothing: antialiased;
+            background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
         }
 
-        /* ===== HEADER ===== */
         .header {
-            background: linear-gradient(135deg, #2AABEE 0%, #1b8ec7 100%);
-            color: #fff;
-            padding: 28px 20px 24px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg,#2AABEE,#1b8ec7);
+            color:#fff; padding:24px 16px; text-align:center;
+            position:sticky; top:0; z-index:9000;
+            box-shadow:0 2px 12px rgba(0,0,0,.15);
         }
+        .header h1 { font-size:21px; font-weight:700; }
+        .header-sub { font-size:13px; opacity:.85; margin-top:3px; }
+        .header-sub a { color:#fff; text-decoration:underline dashed; text-underline-offset:3px; }
 
-        .header-inner {
-            max-width: 680px;
-            margin: 0 auto;
+        .wrap { max-width:680px; margin:0 auto; padding:14px 10px 50px; }
+
+        .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+        .search {
+            flex:1; min-width:160px; padding:9px 13px; font-size:14px;
+            border:1px solid var(--border); border-radius:10px; outline:none;
+            background:var(--card); transition:border-color .2s,box-shadow .2s;
         }
+        .search:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(42,171,238,.12); }
+        .info { font-size:12px; color:var(--muted); white-space:nowrap; }
 
-        .header h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: -0.3px;
-        }
-
-        .header-sub {
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        .header-sub a {
-            color: #fff;
-            text-decoration: underline;
-            text-decoration-style: dashed;
-            text-underline-offset: 3px;
-        }
-
-        /* ===== CONTAINER ===== */
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 16px 12px 40px;
-        }
-
-        /* ===== SEARCH ===== */
-        .toolbar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 180px;
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            outline: none;
-            background: var(--card-bg);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(42, 171, 238, 0.12);
-        }
-
-        .counter {
-            font-size: 12px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        /* ===== LOADING / ERROR ===== */
-        .status-box {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
+        .status { text-align:center; padding:50px 20px; }
         .spinner {
-            width: 36px;
-            height: 36px;
-            border: 3.5px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            margin: 0 auto 14px;
+            width:34px; height:34px; margin:0 auto 12px;
+            border:3.5px solid var(--border); border-top-color:var(--accent);
+            border-radius:50%; animation:sp .7s linear infinite;
         }
+        @keyframes sp { to{transform:rotate(360deg)} }
+        .status p { color:var(--muted); font-size:14px; }
+        .status .err { color:#d9534f; }
+        .retry { margin-top:12px; padding:9px 22px; font-size:14px; background:var(--accent); color:#fff; border:none; border-radius:8px; cursor:pointer; }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .card {
+            background:var(--card); border-radius:12px; margin-bottom:12px;
+            padding:16px 18px; box-shadow:0 1px 4px rgba(0,0,0,.06);
+            transition:box-shadow .2s; word-break:break-word;
         }
+        .card:hover { box-shadow:0 4px 16px rgba(0,0,0,.1); }
+        .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .card-date { font-size:12px; color:var(--muted); }
+        .card-link { font-size:12px; color:var(--accent); text-decoration:none; }
+        .card-link:hover { text-decoration:underline; }
 
-        .status-box p {
-            color: var(--text-secondary);
-            font-size: 14px;
+        .card-body { font-size:15px; line-height:1.72; }
+        .card-body a { color:var(--accent); text-decoration:none; }
+        .card-body a:hover { text-decoration:underline; }
+        .card-body b,.card-body strong { font-weight:600; }
+        .card-body blockquote { border-left:3px solid var(--accent); margin:8px 0; padding:4px 14px; background:#f8f9fa; border-radius:0 8px 8px 0; }
+        .card-body pre { background:#f4f4f4; padding:10px; border-radius:6px; overflow-x:auto; font-size:13px; margin:8px 0; }
+        .card-body code { background:#f0f0f0; padding:1px 5px; border-radius:3px; font-size:13px; }
+
+        .card-photo { margin-top:10px; border-radius:8px; overflow:hidden; line-height:0; cursor:pointer; }
+        .card-photo img { width:100%; display:block; border-radius:8px; }
+        .card-video { margin-top:10px; }
+        .card-video video { width:100%; display:block; border-radius:8px; }
+
+        .card-views { display:flex; align-items:center; gap:4px; margin-top:8px; font-size:12px; color:#bbb; }
+        .card-views svg { width:14px; height:14px; fill:#bbb; }
+
+        .btn-more {
+            display:none; width:100%; padding:12px; margin-top:4px; font-size:14px;
+            color:var(--accent); background:var(--card); border:1px solid var(--border);
+            border-radius:10px; cursor:pointer; transition:all .2s;
         }
+        .btn-more:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
 
-        .status-box .err {
-            color: #d9534f;
+        .btn-top {
+            position:fixed; bottom:22px; right:22px; width:44px; height:44px;
+            background:var(--accent); color:#fff; border:none; border-radius:50%;
+            font-size:20px; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.18);
+            opacity:0; pointer-events:none; transition:opacity .25s; z-index:999;
+            display:flex; align-items:center; justify-content:center;
         }
+        .btn-top.show { opacity:1; pointer-events:auto; }
 
-        .retry-btn {
-            margin-top: 14px;
-            padding: 9px 24px;
-            font-size: 14px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .lb {
+            position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:99999;
+            display:none; align-items:center; justify-content:center; cursor:zoom-out;
         }
+        .lb.open { display:flex; }
+        .lb img { max-width:95vw; max-height:95vh; border-radius:6px; }
 
-        .retry-btn:hover {
-            background: var(--accent-hover);
-        }
+        .empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+        .footer { text-align:center; padding:10px 20px 30px; font-size:11px; color:#bbb; }
+        .footer a { color:var(--accent); text-decoration:none; }
+        mark { background:#fff3cd; padding:0 2px; border-radius:2px; }
 
-        /* ===== POST CARD ===== */
-        .post {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 18px 20px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 4px var(--shadow);
-            transition: box-shadow 0.2s;
-            overflow-wrap: break-word;
-            word-break: break-word;
-        }
-
-        .post:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.09);
-        }
-
-        .post-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .post-date {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .post-link {
-            font-size: 12px;
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .post-link:hover {
-            text-decoration: underline;
-        }
-
-        /* text */
-        .post-body {
-            font-size: 15px;
-            line-height: 1.72;
-        }
-
-        .post-body a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .post-body a:hover {
-            text-decoration: underline;
-        }
-
-        .post-body b,
-        .post-body strong {
-            font-weight: 600;
-        }
-
-        .post-body i,
-        .post-body em {
-            font-style: italic;
-        }
-
-        .post-body blockquote {
-            border-left: 3px solid var(--accent);
-            margin: 8px 0;
-            padding: 4px 14px;
-            background: #f8f9fa;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .post-body pre {
-            background: #f4f4f4;
-            padding: 10px 14px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 13px;
-            margin: 8px 0;
-        }
-
-        .post-body code {
-            background: #f0f0f0;
-            padding: 1px 5px;
-            border-radius: 3px;
-            font-size: 13px;
-        }
-
-        .post-body br + br {
-            display: block;
-            content: "";
-            margin-top: 6px;
-        }
-
-        /* media */
-        .post-media {
-            margin-top: 12px;
-            border-radius: 8px;
-            overflow: hidden;
-            line-height: 0;
-        }
-
-        .post-media img,
-        .post-media video {
-            width: 100%;
-            border-radius: 8px;
-            display: block;
-        }
-
-        .post-media img {
-            cursor: pointer;
-        }
-
-        /* views */
-        .post-footer {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #bbb;
-        }
-
-        .post-footer svg {
-            width: 14px;
-            height: 14px;
-            fill: #bbb;
-        }
-
-        /* ===== LOAD MORE ===== */
-        .load-more-btn {
-            display: block;
-            width: 100%;
-            padding: 13px;
-            margin-top: 4px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--accent);
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .load-more-btn:hover {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
-        .load-more-btn:disabled {
-            opacity: 0.45;
-            cursor: default;
-        }
-
-        /* ===== NO RESULTS ===== */
-        .no-results {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-        }
-
-        /* ===== SCROLL TOP ===== */
-        .scroll-top {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .scroll-top.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* ===== LIGHTBOX ===== */
-        .lightbox {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.88);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-out;
-        }
-
-        .lightbox.open {
-            display: flex;
-        }
-
-        .lightbox img {
-            max-width: 94vw;
-            max-height: 94vh;
-            border-radius: 6px;
-        }
-
-        /* ===== FOOTER ===== */
-        .footer {
-            text-align: center;
-            padding: 10px 20px 30px;
-            font-size: 11px;
-            color: #bbb;
-        }
-
-        .footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 520px) {
-            .header { padding: 20px 14px 18px; }
-            .header h1 { font-size: 19px; }
-            .post { padding: 14px 15px; border-radius: 10px; }
-            .container { padding: 12px 8px 30px; }
+        @media(max-width:520px){
+            .header{padding:18px 12px} .header h1{font-size:18px}
+            .card{padding:13px 14px;border-radius:10px} .wrap{padding:10px 6px 40px}
         }
     </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <div class="header-inner">
-        <h1>📢 adv_vfedorov</h1>
-        <div class="header-sub">
-            Посты из Telegram-канала
-            <a href="https://t.me/adv_vfedorov" target="_blank" rel="noopener">@adv_vfedorov</a>
-        </div>
-    </div>
-</div>
+<header class="header">
+    <h1>📢 adv_vfedorov</h1>
+    <div class="header-sub">Посты из канала <a href="https://t.me/adv_vfedorov" target="_blank">@adv_vfedorov</a></div>
+</header>
 
-<!-- MAIN -->
-<div class="container">
+<main class="wrap">
     <div class="toolbar">
-        <input class="search-input" id="search" type="text" placeholder="🔍 Поиск по постам…">
-        <span class="counter" id="counter"></span>
+        <input class="search" id="q" type="text" placeholder="🔍 Поиск по постам…">
+        <span class="info" id="info"></span>
     </div>
-
     <div id="feed">
-        <div class="status-box" id="loader">
-            <div class="spinner"></div>
-            <p>Загрузка постов…</p>
-        </div>
+        <div class="status" id="loader"><div class="spinner"></div><p>Загрузка постов…</p></div>
     </div>
+    <button class="btn-more" id="more">Показать ещё</button>
+</main>
 
-    <button class="load-more-btn" id="moreBtn" style="display:none" onclick="showMore()">Показать ещё</button>
-</div>
-
-<!-- SCROLL-TOP -->
-<button class="scroll-top" id="scrollBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')">
-    <img id="lightboxImg" src="" alt="">
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-    Источник: <a href="https://t.me/adv_vfedorov" target="_blank">t.me/adv_vfedorov</a>
-</div>
+<button class="btn-top" id="top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="lb" id="lb" onclick="this.classList.remove('open')"><img id="lbImg" src="" alt=""></div>
+<div class="footer">Источник: <a href="https://t.me/adv_vfedorov" target="_blank">t.me/adv_vfedorov</a> · Обновляется автоматически</div>
 
 <script>
-(function () {
-    'use strict';
+(function(){
+    const BATCH = 20;
+    let posts=[], vis=[], shown=0, query='';
 
-    /* ── config ── */
-    const CHANNEL   = 'adv_vfedorov';
-    const PAGE_SIZE = 20;
+    const $f=document.getElementById('feed'),
+          $l=document.getElementById('loader'),
+          $i=document.getElementById('info'),
+          $m=document.getElementById('more'),
+          $q=document.getElementById('q'),
+          $t=document.getElementById('top'),
+          $lb=document.getElementById('lb'),
+          $li=document.getElementById('lbImg');
 
-    /* ── state ── */
-    let allPosts     = [];
-    let filtered     = [];
-    let shown        = 0;
-    let searchQuery  = '';
-
-    /* ── DOM refs ── */
-    const $feed    = document.getElementById('feed');
-    const $loader  = document.getElementById('loader');
-    const $counter = document.getElementById('counter');
-    const $more    = document.getElementById('moreBtn');
-    const $search  = document.getElementById('search');
-    const $scroll  = document.getElementById('scrollBtn');
-    const $lb      = document.getElementById('lightbox');
-    const $lbImg   = document.getElementById('lightboxImg');
-
-    /* ── CORS proxies (same approach as the reference site) ── */
-    const proxies = [
-        u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-        u => 'https://corsproxy.io/?' + encodeURIComponent(u),
-        u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
-        u => 'https://crossorigin.me/' + u,
-    ];
-
-    /* ── fetch with fallback ── */
-    async function grab(url, timeout = 12000) {
-        for (const px of proxies) {
-            try {
-                const r = await fetch(px(url), { signal: AbortSignal.timeout(timeout) });
-                if (r.ok) {
-                    const t = await r.text();
-                    if (t && t.length > 200) return t;
-                }
-            } catch (_) { /* next */ }
-        }
-        throw new Error('all proxies failed');
-    }
-
-    /* ── parse t.me/s/ HTML ── */
-    function parseHTML(html) {
-        const doc  = new DOMParser().parseFromString(html, 'text/html');
-        const msgs = doc.querySelectorAll('.tgme_widget_message_wrap');
-        const out  = [];
-
-        msgs.forEach(wrap => {
-            const bubble = wrap.querySelector('.tgme_widget_message_bubble');
-            if (!bubble) return;
-
-            /* text */
-            const textEl = bubble.querySelector('.tgme_widget_message_text');
-            let text = textEl ? textEl.innerHTML.trim() : '';
-
-            /* date */
-            const timeEl = bubble.querySelector('time[datetime]');
-            const dt = timeEl ? new Date(timeEl.getAttribute('datetime')) : null;
-
-            /* link */
-            const linkEl = bubble.querySelector('a.tgme_widget_message_date');
-            const link = linkEl ? linkEl.getAttribute('href') : '';
-
-            /* views */
-            const viewsEl = bubble.querySelector('.tgme_widget_message_views');
-            const views = viewsEl ? viewsEl.textContent.trim() : '';
-
-            /* photo */
-            let photoUrl = '';
-            const photoWrap = bubble.querySelector('.tgme_widget_message_photo_wrap');
-            if (photoWrap) {
-                const st = photoWrap.getAttribute('style') || '';
-                const m  = st.match(/url\(['"]?(.*?)['"]?\)/);
-                if (m) photoUrl = m[1];
-            }
-
-            /* video */
-            let videoUrl = '';
-            const videoEl = bubble.querySelector('video');
-            if (videoEl) videoUrl = videoEl.getAttribute('src') || '';
-
-            /* round video / voice — skip if completely empty */
-            if (!text && !photoUrl && !videoUrl) return;
-
-            const msgEl = wrap.querySelector('.tgme_widget_message');
-            const dataPost = msgEl ? msgEl.getAttribute('data-post') : '';
-            const postId = dataPost ? dataPost.split('/').pop() : '';
-
-            out.push({ text, date: dt, link, views, photoUrl, videoUrl, id: postId });
+    /* Load pre-scraped JSON */
+    fetch('posts.json')
+        .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
+        .then(data=>{
+            posts=data.sort((a,b)=>b.id-a.id);
+            $l.remove();
+            if(!posts.length){$f.innerHTML='<div class="empty">Постов пока нет</div>';return;}
+            doFilter();
+        })
+        .catch(e=>{
+            $l.innerHTML=`<p class="err">Ошибка загрузки: ${e.message}</p>
+                <button class="retry" onclick="location.reload()">Повторить</button>
+                <p style="margin-top:14px"><a href="https://t.me/adv_vfedorov" target="_blank" style="color:var(--accent);font-size:13px">Открыть канал в Telegram →</a></p>`;
         });
 
-        return out;
+    function doFilter(){
+        const lq=query.toLowerCase();
+        vis=lq?posts.filter(p=>strip(p.text).toLowerCase().includes(lq)):[...posts];
+        shown=0; $f.innerHTML='';
+        $i.textContent=vis.length+' пост'+plu(vis.length);
+        if(!vis.length){$f.innerHTML='<div class="empty">Ничего не найдено</div>';$m.style.display='none';return;}
+        batch();
     }
 
-    /* ── load ALL posts by scrolling back ── */
-    async function loadAllPosts() {
-        let url = `https://t.me/s/${CHANNEL}`;
-        let allLoaded = [];
-        let seenIds = new Set();
-        let attempts = 0;
-        const MAX_ATTEMPTS = 200;        // safety limit
-
-        // First load — latest posts
-        let html = await grab(url);
-        let posts = parseHTML(html);
-
-        posts.forEach(p => {
-            if (p.id && !seenIds.has(p.id)) {
-                seenIds.add(p.id);
-                allLoaded.push(p);
-            }
-        });
-
-        // Walk backwards using "before" parameter
-        while (attempts < MAX_ATTEMPTS) {
-            attempts++;
-            // find the smallest id we have
-            const ids = allLoaded.map(p => parseInt(p.id)).filter(n => !isNaN(n) && n > 0);
-            if (ids.length === 0) break;
-            const minId = Math.min(...ids);
-            if (minId <= 1) break;
-
-            const olderUrl = `https://t.me/s/${CHANNEL}?before=${minId}`;
-            try {
-                html = await grab(olderUrl, 15000);
-            } catch (_) {
-                break;
-            }
-
-            posts = parseHTML(html);
-            if (posts.length === 0) break;
-
-            let added = 0;
-            posts.forEach(p => {
-                if (p.id && !seenIds.has(p.id)) {
-                    seenIds.add(p.id);
-                    allLoaded.push(p);
-                    added++;
-                }
-            });
-
-            if (added === 0) break;
-
-            // update loading indicator
-            $loader.querySelector('p').textContent = `Загружено ${allLoaded.length} постов…`;
-        }
-
-        // sort newest first
-        allLoaded.sort((a, b) => {
-            const ia = parseInt(a.id) || 0;
-            const ib = parseInt(b.id) || 0;
-            return ib - ia;
-        });
-
-        return allLoaded;
+    function batch(){
+        const end=Math.min(shown+BATCH,vis.length);
+        for(let i=shown;i<end;i++) $f.appendChild(mkCard(vis[i]));
+        shown=end;
+        $m.style.display=shown<vis.length?'block':'none';
+        if(shown<vis.length) $m.textContent=`Показать ещё (${vis.length-shown})`;
     }
 
-    /* ── render helpers ── */
-    function fmtDate(d) {
-        if (!d || isNaN(d)) return '';
-        return d.toLocaleDateString('ru-RU', {
-            day: 'numeric', month: 'long', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
+    function mkCard(p){
+        const el=document.createElement('div'); el.className='card';
+        let body=p.text||'';
+        if(query) body=hl(body,query);
+
+        let media='';
+        if(p.photo) media=`<div class="card-photo" onclick="openLb('${esc(p.photo)}')"><img src="${esc(p.photo)}" alt="" loading="lazy"></div>`;
+        else if(p.video) media=`<div class="card-video"><video src="${esc(p.video)}" controls preload="none"></video></div>`;
+
+        let foot='';
+        if(p.views) foot=`<div class="card-views"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>${p.views}</div>`;
+
+        const link=`https://t.me/adv_vfedorov/${p.id}`;
+        el.innerHTML=`<div class="card-head"><span class="card-date">${fmtD(p.date)}</span><a class="card-link" href="${link}" target="_blank">Открыть ↗</a></div>${body?`<div class="card-body">${body}</div>`:''}${media}${foot}`;
+        return el;
     }
 
-    function highlight(html, q) {
-        if (!q) return html;
-        // We highlight only in visible text, not inside tags
-        const esc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const re  = new RegExp(`(${esc})`, 'gi');
-        // split by tags, highlight only text parts
-        return html.replace(/>([^<]*)</g, (full, txt) => {
-            return '>' + txt.replace(re, '<mark style="background:var(--mark-bg);padding:0 2px;border-radius:2px">$1</mark>') + '<';
-        });
-    }
+    function fmtD(s){if(!s)return'';const d=new Date(s);if(isNaN(d))return s;return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+    function strip(h){return(h||'').replace(/<[^>]*>/g,'');}
+    function esc(s){return s.replace(/'/g,"\\'");}
+    function hl(h,q){const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),r=new RegExp(`(${e})`,'gi');return h.replace(/>([^<]*)</g,(f,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<');}
+    function plu(n){const m=n%100;if(m>=11&&m<=19)return'ов';const l=n%10;if(l===1)return'';if(l>=2&&l<=4)return'а';return'ов';}
 
-    function buildCard(p) {
-        const card = document.createElement('div');
-        card.className = 'post';
-
-        let body = p.text;
-        if (searchQuery) body = highlight(body, searchQuery);
-
-        let media = '';
-        if (p.photoUrl) {
-            media = `<div class="post-media"><img src="${p.photoUrl}" alt="" loading="lazy" onclick="openLightbox(this.src)"></div>`;
-        } else if (p.videoUrl) {
-            media = `<div class="post-media"><video src="${p.videoUrl}" controls preload="none"></video></div>`;
-        }
-
-        let footer = '';
-        if (p.views) {
-            footer = `<div class="post-footer">
-                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                ${p.views}
-            </div>`;
-        }
-
-        card.innerHTML = `
-            <div class="post-head">
-                <span class="post-date">${fmtDate(p.date)}</span>
-                ${p.link ? `<a class="post-link" href="${p.link}" target="_blank" rel="noopener">Открыть ↗</a>` : ''}
-            </div>
-            ${body ? `<div class="post-body">${body}</div>` : ''}
-            ${media}
-            ${footer}
-        `;
-        return card;
-    }
-
-    /* ── rendering ── */
-    function applyFilter() {
-        const q = searchQuery.toLowerCase();
-        filtered = q
-            ? allPosts.filter(p => {
-                const plain = p.text.replace(/<[^>]*>/g, '').toLowerCase();
-                return plain.includes(q);
-            })
-            : [...allPosts];
-
-        shown = 0;
-        $feed.innerHTML = '';
-        $counter.textContent = filtered.length + ' пост' + pluralRu(filtered.length);
-
-        if (filtered.length === 0) {
-            $feed.innerHTML = '<div class="no-results">Ничего не найдено</div>';
-            $more.style.display = 'none';
-            return;
-        }
-
-        appendBatch();
-    }
-
-    function appendBatch() {
-        const end = Math.min(shown + PAGE_SIZE, filtered.length);
-        for (let i = shown; i < end; i++) {
-            $feed.appendChild(buildCard(filtered[i]));
-        }
-        shown = end;
-        if (shown < filtered.length) {
-            $more.style.display = 'block';
-            $more.textContent = `Показать ещё (осталось ${filtered.length - shown})`;
-        } else {
-            $more.style.display = 'none';
-        }
-    }
-
-    function pluralRu(n) {
-        const m = n % 100;
-        if (m >= 11 && m <= 19) return 'ов';
-        const l = n % 10;
-        if (l === 1) return '';
-        if (l >= 2 && l <= 4) return 'а';
-        return 'ов';
-    }
-
-    /* ── public ── */
-    window.showMore = appendBatch;
-
-    window.openLightbox = function (src) {
-        $lbImg.src = src;
-        $lb.classList.add('open');
-    };
-
-    /* ── search ── */
-    let debounce;
-    $search.addEventListener('input', () => {
-        clearTimeout(debounce);
-        debounce = setTimeout(() => {
-            searchQuery = $search.value.trim();
-            applyFilter();
-        }, 250);
-    });
-
-    /* ── scroll-top button ── */
-    window.addEventListener('scroll', () => {
-        $scroll.classList.toggle('show', window.scrollY > 600);
-    }, { passive: true });
-
-    /* ── ESC closes lightbox ── */
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') $lb.classList.remove('open');
-    });
-
-    /* ── error UI ── */
-    function showError(msg) {
-        $feed.innerHTML = `
-            <div class="status-box">
-                <p class="err">😔 ${msg}</p>
-                <p style="margin-top:6px;font-size:13px;color:#999">Попробуйте обновить страницу</p>
-                <button class="retry-btn" onclick="location.reload()">Повторить</button>
-                <p style="margin-top:14px">
-                    <a href="https://t.me/${CHANNEL}" target="_blank" style="color:var(--accent);font-size:13px">
-                        Открыть канал в Telegram →
-                    </a>
-                </p>
-            </div>`;
-    }
-
-    /* ── INIT ── */
-    async function init() {
-        try {
-            allPosts = await loadAllPosts();
-            $loader.remove();
-
-            if (allPosts.length === 0) {
-                showError('Не удалось загрузить посты');
-                return;
-            }
-
-            applyFilter();
-        } catch (err) {
-            console.error(err);
-            $loader.remove();
-            showError('Ошибка загрузки: ' + err.message);
-        }
-    }
-
-    init();
+    window.openLb=function(s){$li.src=s;$lb.classList.add('open');};
+    $m.onclick=batch;
+    let deb;$q.addEventListener('input',()=>{clearTimeout(deb);deb=setTimeout(()=>{query=$q.value.trim();doFilter();},250);});
+    addEventListener('scroll',()=>{$t.classList.toggle('show',scrollY>500);},{passive:true});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')$lb.classList.remove('open');});
 })();
 </script>
 </body>
